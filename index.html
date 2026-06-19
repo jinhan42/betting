@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d1117">
+<title>⚽ 로패를 위한 2026년 멕시코 월드컵 승부 맞추기(찐)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0d1117;color:#e6edf3;min-height:100dvh;padding-bottom:48px}
+:root{--gold:#f5a623;--red:#e94560;--green:#3fb950;--blue:#58a6ff;--surface:#161b22;--card:#21262d;--border:#30363d;--muted:#8b949e;--warn:#d29922}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:18px 16px 14px;text-align:center}
+.match-badge{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 14px;font-size:11px;color:var(--muted);margin-bottom:10px}
+.match-badge b{color:var(--gold)}
+.header h1{font-size:20px;font-weight:700;margin-bottom:4px}
+.vs-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 8px}
+.team{font-size:22px;font-weight:800}
+.team.h{color:var(--blue)}.team.a{color:var(--red)}
+.vs-sep{font-size:13px;font-weight:700;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:6px;padding:3px 8px}
+.deadline-bar{background:var(--card);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.dl-left{font-size:12px;color:var(--muted)}.dl-left b{color:var(--warn)}
+.countdown{font-size:13px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+.countdown.urgent{color:var(--red);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.blocked{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:55vh;padding:32px 20px;text-align:center}
+.blocked.show{display:flex}
+.blocked-icon{font-size:56px;margin-bottom:16px}
+.blocked h2{font-size:20px;font-weight:700;color:var(--red);margin-bottom:8px}
+.blocked p{font-size:14px;color:var(--muted);line-height:1.7}
+.blocked .hint{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 18px;margin-top:14px;font-size:13px;color:var(--muted)}
+.tabs{display:flex;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.tab-btn{flex:1;padding:13px 6px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-content{display:none;padding:16px}
+.tab-content.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.card-hd{padding:14px 16px 10px;border-bottom:1px solid var(--border)}
+.card-hd h3{font-size:14px;font-weight:600}
+.card-hd p{font-size:12px;color:var(--muted);margin-top:3px}
+.card-bd{padding:14px 16px}
+.field-lbl{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
+.name-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:16px;color:#e6edf3;outline:none;-webkit-appearance:none}
+.name-input:focus{border-color:var(--blue)}
+.name-input::placeholder{color:var(--muted)}
+.score-grid{display:grid;grid-template-columns:1fr 36px 1fr;gap:8px;align-items:center;margin-top:8px}
+.stl{font-size:12px;font-weight:700;text-align:center;margin-bottom:5px}
+.stl.h{color:var(--blue)}.stl.a{color:var(--red)}
+.spinner{display:flex;flex-direction:column;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px;gap:3px}
+.sp-btn{background:var(--border);border:none;border-radius:7px;width:100%;padding:9px 0;font-size:15px;font-weight:700;cursor:pointer;color:#e6edf3;transition:background .15s}
+.sp-btn:active{background:#3d444d;transform:scale(.95)}
+.sp-val{font-size:32px;font-weight:800;text-align:center;line-height:1;padding:4px 0;min-width:40px}
+.sp-val.h{color:var(--blue)}.sp-val.a{color:var(--red)}
+.vs-mid{text-align:center;font-size:20px;font-weight:800;color:var(--muted)}
+.save-btn{width:100%;background:var(--gold);border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:700;color:#0d1117;cursor:pointer;margin-top:14px}
+.save-btn:active{opacity:.85;transform:scale(.98)}
+.save-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;transform:none}
+.success{display:none;text-align:center;padding:28px 16px}
+.success.show{display:block}
+.s-icon{font-size:52px;margin-bottom:14px}
+.success h2{font-size:20px;font-weight:700;color:var(--green);margin-bottom:6px}
+.success p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:18px}
+.my-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:left;margin-bottom:14px}
+.my-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:14px}
+.my-row:last-child{border-bottom:none}
+.my-row .lbl{color:var(--muted)}.my-row .val{font-weight:600}
+.retake-btn{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.list-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.list-cnt{font-size:13px;color:var(--muted)}.list-cnt b{color:var(--gold);font-size:15px}
+.ref-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer}
+.ref-btn:active{background:var(--border)}
+.p-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.p-row{display:flex;align-items:center;padding:12px 14px;gap:10px}
+.p-num{font-size:12px;font-weight:700;color:var(--muted);min-width:22px}
+.p-info{flex:1}.p-name{font-size:14px;font-weight:600}.p-time{font-size:11px;color:var(--muted);margin-top:2px}
+.p-sc{font-size:16px;font-weight:800}.psh{color:var(--blue)}.psa{color:var(--red)}.pss{color:var(--muted);font-size:13px}
+.empty{text-align:center;padding:48px 20px;color:var(--muted)}.empty .ic{font-size:40px;margin-bottom:12px}
+.loading-msg{text-align:center;padding:32px 20px;color:var(--muted);font-size:14px}
+.err-msg{background:#2d1a1e;border:1px solid var(--red);border-radius:10px;padding:12px 14px;margin:10px 0;font-size:13px;color:#ff8096;line-height:1.6;display:none}
+.err-msg.show{display:block}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="match-badge">⚽ <b>오늘의 경기</b></div>
+  <h1>로패를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)</h1>
+  <div class="vs-row">
+    <span class="team h">대한민국</span>
+    <span class="vs-sep">VS</span>
+    <span class="team a">멕시코</span>
+  </div>
+</div>
+
+<div class="deadline-bar">
+  <div class="dl-left">⏰ 참가 마감: <b>오전 09:55</b></div>
+  <div class="countdown" id="countdown">계산 중...</div>
+</div>
+
+<div class="blocked" id="blocked">
+  <div class="blocked-icon">🔒</div>
+  <h2>참가 마감되었습니다</h2>
+  <p>오전 09:55 이후에는<br>스코어 입력이 불가합니다</p>
+  <div class="hint">참가자 목록은 아래 <b>👥 참가자 목록</b> 탭에서 확인할 수 있습니다</div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" id="tab-btn-input" onclick="switchTab('input')">📝 예측 입력</button>
+  <button class="tab-btn" onclick="switchTab('list')">👥 참가자 목록</button>
+</div>
+
+<!-- 예측 입력 탭 -->
+<div class="tab-content active" id="tab-input">
+  <div id="form-wrap">
+    <div class="card">
+      <div class="card-hd"><h3>내 정보</h3><p>이름을 입력하고 스코어를 예측하세요</p></div>
+      <div class="card-bd">
+        <div class="field-lbl">이름</div>
+        <input class="name-input" id="pname" type="text" placeholder="이름 입력" maxlength="10" autocomplete="off">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><h3>스코어 예측</h3><p>▲▼ 버튼으로 점수를 설정하세요</p></div>
+      <div class="card-bd">
+        <div class="score-grid">
+          <div>
+            <div class="stl h">대한민국</div>
+            <div class="spinner">
+              <button class="sp-btn" onclick="spin('h',1)">▲</button>
+              <div class="sp-val h" id="vh">0</div>
+              <button class="sp-btn" onclick="spin('h',-1)">▼</button>
+            </div>
+          </div>
+          <div class="vs-mid">:</div>
+          <div>
+            <div class="stl a">멕시코</div>
+            <div class="spinner">
+              <button class="sp-btn" onclick="spin('a',1)">▲</button>
+              <div class="sp-val a" id="va">0</div>
+              <button class="sp-btn" onclick="spin('a',-1)">▼</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="err-msg" id="err-msg"></div>
+    <button class="save-btn" id="save-btn" onclick="saveEntry()">✅ 참가 완료 (저장)</button>
+  </div>
+
+  <div class="success" id="success">
+    <div class="s-icon">🎉</div>
+    <h2>참가 완료!</h2>
+    <p>예측이 저장되었습니다<br>경기 후 결과를 확인하세요</p>
+    <div class="my-card">
+      <div class="my-row"><span class="lbl">이름</span><span class="val" id="s-name">—</span></div>
+      <div class="my-row"><span class="lbl">예측 스코어</span><span class="val" id="s-score">—</span></div>
+      <div class="my-row"><span class="lbl">저장 시간</span><span class="val" id="s-time">—</span></div>
+    </div>
+    <button class="retake-btn" onclick="retake()">✏️ 수정하기</button>
+  </div>
+</div>
+
+<!-- 참가자 목록 탭 -->
+<div class="tab-content" id="tab-list">
+  <div class="list-hd">
+    <div class="list-cnt">총 <b id="list-total">0</b>명 참가</div>
+    <button class="ref-btn" onclick="loadList()">🔄 새로고침</button>
+  </div>
+  <div id="plist"><div class="loading-msg">불러오는 중...</div></div>
+</div>
+
+<script>
+// ── 설정 ──────────────────────────────────────────
+const BIN_ID  = '6a348013f5f4af5e290be80c';   // JSONBin.io bin ID (아래 설명 참고)
+const API_KEY = '$2a$10$AA/r19btSfKXcfGKQ825aen.2vo34PhHwyIPIIoHrHp6S/ouRLS8q';  // JSONBin.io API Key
+const HOME = '대한민국', AWAY = '멕시코';
+const DEADLINE_H = 9, DEADLINE_M = 55;
+
+let sc = { h: 0, a: 0 };
+let closed = false;
+
+// ── JSONBin 헬퍼 ──────────────────────────────────
+async function fetchParticipants() {
+  const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+    method: 'GET',
+    headers: { 'X-Master-Key': API_KEY }
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  const data = await r.json();
+  const rec = Array.isArray(data.record) ? data.record : (Array.isArray(data) ? data : []);
+  return rec.filter(p => !p.init);
+}
+
+async function updateParticipants(list) {
+  const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+    body: JSON.stringify(list)
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+}
+
+// ── 스피너 ──────────────────────────────────────
+function spin(t, d) {
+  sc[t] = Math.max(0, sc[t] + d);
+  document.getElementById('v' + t).textContent = sc[t];
+}
+
+// ── 저장 ────────────────────────────────────────
+async function saveEntry() {
+  if (closed) { showErr('참가 마감 시간이 지났습니다.'); return; }
+  const name = document.getElementById('pname').value.trim();
+  if (!name) { showErr('이름을 입력해주세요'); document.getElementById('pname').focus(); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.textContent = '저장 중...';
+  hideErr();
+
+  try {
+    const all = await fetchParticipants();
+    const entry = {
+      name, home: sc.h, away: sc.a,
+      time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      ts: Date.now()
+    };
+    const idx = all.findIndex(p => p.name === name);
+    if (idx >= 0) all[idx] = entry; else all.push(entry);
+    await updateParticipants(all);
+
+    document.getElementById('s-name').textContent = name;
+    document.getElementById('s-score').textContent = `${HOME} ${sc.h} : ${sc.a} ${AWAY}`;
+    document.getElementById('s-time').textContent = entry.time;
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('success').classList.add('show');
+  } catch(e) {
+    showErr('저장에 실패했습니다. 인터넷 연결을 확인하고 다시 시도해주세요.\n(오류: ' + e.message + ')');
+    btn.disabled = false;
+    btn.textContent = '✅ 참가 완료 (저장)';
+  }
+}
+
+function retake() {
+  document.getElementById('success').classList.remove('show');
+  document.getElementById('form-wrap').style.display = '';
+  document.getElementById('save-btn').disabled = false;
+  document.getElementById('save-btn').textContent = '✅ 참가 완료 (저장)';
+}
+
+// ── 참가자 목록 ─────────────────────────────────
+async function loadList() {
+  const box = document.getElementById('plist');
+  box.innerHTML = '<div class="loading-msg">불러오는 중...</div>';
+  try {
+    const all = await fetchParticipants();
+    document.getElementById('list-total').textContent = all.length;
+    if (!all.length) { box.innerHTML = '<div class="empty"><div class="ic">👥</div>아직 참가자가 없습니다</div>'; return; }
+    const sorted = [...all].sort((a,b) => a.ts - b.ts);
+    box.innerHTML = sorted.map((p,i) => `
+      <div class="p-card"><div class="p-row">
+        <div class="p-num">${i+1}</div>
+        <div class="p-info"><div class="p-name">${esc(p.name)}</div><div class="p-time">⏱ ${p.time}</div></div>
+        <div class="p-sc"><span class="psh">${p.home}</span><span class="pss"> : </span><span class="psa">${p.away}</span></div>
+      </div></div>`).join('');
+  } catch(e) {
+    box.innerHTML = '<div class="empty">목록을 불러오지 못했습니다<br><small>새로고침을 눌러주세요</small></div>';
+  }
+}
+
+// ── 마감 타이머 ─────────────────────────────────
+function checkDeadline() {
+  const now = new Date();
+  const dl  = new Date(); dl.setHours(DEADLINE_H, DEADLINE_M, 0, 0);
+  const diff = dl - now;
+  closed = diff <= 0;
+  const cd = document.getElementById('countdown');
+  const blk = document.getElementById('blocked');
+  const tbInput = document.getElementById('tab-btn-input');
+  if (closed) {
+    cd.textContent = '마감'; cd.style.color = 'var(--red)';
+    blk.classList.add('show');
+    document.getElementById('form-wrap').style.display = 'none';
+    tbInput.style.opacity = '.4'; tbInput.style.pointerEvents = 'none';
+  } else {
+    blk.classList.remove('show');
+    tbInput.style.opacity = ''; tbInput.style.pointerEvents = '';
+    const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+    cd.className = 'countdown' + (diff < 300000 ? ' urgent' : '');
+    cd.textContent = h > 0 ? `${h}시간 ${m}분 남음` : m > 0 ? `${m}분 ${s}초 남음` : `${s}초 남음`;
+  }
+}
+
+// ── 탭 전환 ─────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  if (name === 'input') {
+    document.getElementById('tab-btn-input').classList.add('active');
+    document.getElementById('tab-input').classList.add('active');
+  } else {
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.getElementById('tab-list').classList.add('active');
+    loadList();
+  }
+}
+
+function showErr(msg) { const e = document.getElementById('err-msg'); e.textContent = msg; e.classList.add('show'); }
+function hideErr() { document.getElementById('err-msg').classList.remove('show'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+checkDeadline();
+setInterval(checkDeadline, 1000);
+</script>
+</body>
+</html>
