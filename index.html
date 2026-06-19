@@ -85,7 +85,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="header">
   <div class="match-badge">⚽ <b>오늘의 경기</b></div>
-  <h1 id="main-title">로패를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)</h1>
+  <h1 id="main-title"></h1>
   <div class="vs-row">
     <span class="team h">대한민국</span>
     <span class="vs-sep">VS</span>
@@ -321,23 +321,21 @@ function showErr(msg) { const e = document.getElementById('err-msg'); e.textCont
 function hideErr() { document.getElementById('err-msg').classList.remove('show'); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// URL 파라미터로 그룹명 자동 설정 (페이지 로드 후 실행)
-// 예: index.html?group=유니와이드
 // URL 파라미터로 그룹명 자동 적용
-(function() {
+function applyGroupFromURL() {
   try {
     const params = new URLSearchParams(window.location.search);
-    const g = params.get('group');
-    if (g) {
-      const decoded = decodeURIComponent(g);
-      const inp = document.getElementById('group-name');
-      if (inp) inp.value = decoded;
-      const title = document.getElementById('main-title');
-      if (title) title.innerHTML = decoded + '를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)';
-    }
-  } catch(e) {}
-})();
+    const raw = params.get('group');
+    const g = raw ? decodeURIComponent(raw) : DEFAULT_GROUP;
+    const inp = document.getElementById('group-name');
+    if (inp) inp.value = g;
+    const title = document.getElementById('main-title');
+    if (title) title.innerHTML = g + '를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)';
+  } catch(e) { console.log('group err:', e); }
+}
+applyGroupFromURL();
 
+applyGroupFromURL();
 checkDeadline();
 setInterval(checkDeadline, 1000);
 </script>
