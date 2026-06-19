@@ -186,6 +186,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <script>
+// v20260619_03
 // ── 설정 ──────────────────────────────────────────
 const BIN_ID  = '6a348013f5f4af5e290be80c';   // JSONBin.io bin ID (아래 설명 참고)
 const API_KEY = '$2a$10$AA/r19btSfKXcfGKQ825aen.2vo34PhHwyIPIIoHrHp6S/ouRLS8q';  // JSONBin.io API Key
@@ -338,8 +339,6 @@ function applyGroupFromURL() {
     if (title) title.innerHTML = g + '를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)';
   } catch(e) { console.log('group err:', e); }
 }
-applyGroupFromURL();
-
 applyGroupFromURL();
 checkDeadline();
 setInterval(checkDeadline, 1000);
