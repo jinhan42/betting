@@ -85,7 +85,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="header">
   <div class="match-badge">⚽ <b>오늘의 경기</b></div>
-  <h1>로패를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)</h1>
+  <h1 id="main-title">로패를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)</h1>
   <div class="vs-row">
     <span class="team h">대한민국</span>
     <span class="vs-sep">VS</span>
@@ -113,6 +113,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- 예측 입력 탭 -->
 <div class="tab-content active" id="tab-input">
   <div id="form-wrap">
+    <div class="card">
+      <div class="card-hd"><h3>⚙️ 그룹명 설정</h3><p>우리 동호회/팀 이름을 입력하세요</p></div>
+      <div class="card-bd">
+        <div class="field-lbl">그룹명</div>
+        <div style="display:flex;gap:8px">
+          <input class="name-input" id="group-name" type="text" placeholder="예) 로패, 유니와이드..." maxlength="20" autocomplete="off" value="로패">
+          <button onclick="applyGroup()" style="background:var(--blue);border:none;border-radius:10px;padding:0 16px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;white-space:nowrap">적용</button>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-hd"><h3>내 정보</h3><p>이름을 입력하고 스코어를 예측하세요</p></div>
       <div class="card-bd">
@@ -175,6 +186,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 const BIN_ID  = '6a348013f5f4af5e290be80c';   // JSONBin.io bin ID (아래 설명 참고)
 const API_KEY = '$2a$10$AA/r19btSfKXcfGKQ825aen.2vo34PhHwyIPIIoHrHp6S/ouRLS8q';  // JSONBin.io API Key
 const HOME = '대한민국', AWAY = '멕시코';
+const DEFAULT_GROUP = '로패';
 const DEADLINE_H = 9, DEADLINE_M = 55;
 
 let sc = { h: 0, a: 0 };
@@ -308,6 +320,23 @@ function switchTab(name) {
 function showErr(msg) { const e = document.getElementById('err-msg'); e.textContent = msg; e.classList.add('show'); }
 function hideErr() { document.getElementById('err-msg').classList.remove('show'); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// URL 파라미터로 그룹명 자동 설정 (페이지 로드 후 실행)
+// 예: index.html?group=유니와이드
+window.addEventListener('DOMContentLoaded', function() {
+  const urlGroup = new URLSearchParams(window.location.search).get('group');
+if (urlGroup) {
+  try {
+    const decoded = decodeURIComponent(urlGroup);
+    document.getElementById('group-name').value = decoded;
+    applyGroup();
+  } catch(e) {
+    document.getElementById('group-name').value = urlGroup;
+    applyGroup();
+  }
+}
+
+});
 
 checkDeadline();
 setInterval(checkDeadline, 1000);
