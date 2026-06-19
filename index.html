@@ -323,20 +323,20 @@ function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 
 // URL 파라미터로 그룹명 자동 설정 (페이지 로드 후 실행)
 // 예: index.html?group=유니와이드
-window.addEventListener('DOMContentLoaded', function() {
-  const urlGroup = new URLSearchParams(window.location.search).get('group');
-if (urlGroup) {
+// URL 파라미터로 그룹명 자동 적용
+(function() {
   try {
-    const decoded = decodeURIComponent(urlGroup);
-    document.getElementById('group-name').value = decoded;
-    applyGroup();
-  } catch(e) {
-    document.getElementById('group-name').value = urlGroup;
-    applyGroup();
-  }
-}
-
-});
+    const params = new URLSearchParams(window.location.search);
+    const g = params.get('group');
+    if (g) {
+      const decoded = decodeURIComponent(g);
+      const inp = document.getElementById('group-name');
+      if (inp) inp.value = decoded;
+      const title = document.getElementById('main-title');
+      if (title) title.innerHTML = decoded + '를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)';
+    }
+  } catch(e) {}
+})();
 
 checkDeadline();
 setInterval(checkDeadline, 1000);
