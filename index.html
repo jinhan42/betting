@@ -353,8 +353,8 @@ function applyGroupFromURL() {
     const inp = document.getElementById('group-name');
     if (inp) inp.value = g;
     const mainTitle = document.getElementById('main-title');
-    if (mainTitle) mainTitle.innerHTML = g + '를 위한 2026년 멕시코 월드컵<br>승부 맞추기(찐)';
-    document.title = '⚽ ' + g + '를 위한 2026년 멕시코 월드컵 승부 맞추기(찐)';
+    if (mainTitle) mainTitle.innerHTML = g + '를 위한 2026년 월드컵<br>승부 맞추기';
+    document.title = '⚽ ' + g + '를 위한 2026년 월드컵 승부 맞추기 ';
   } catch(e) { console.log('group err:', e); }
 }
 applyGroupFromURL();
